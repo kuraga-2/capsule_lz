@@ -5,7 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import datetime
 
-
+# Ф-ция логгирования
 def log(func):
     def wrapper(*args, **kwargs):
         original_result = func(*args, **kwargs)
@@ -13,7 +13,7 @@ def log(func):
         username = os.getlogin()
         func_name = func.__name__
         formatted_date = date.today().strftime("%d-%m-%Y")
-        formatted_time = datetime.now().strftime("%H:%M:%S")
+        formatted_time = datetime.datetime.now()
         
         if os.path.exists("logs.csv"):
             file_df = pd.read_csv('logs.csv')
@@ -39,10 +39,13 @@ def log(func):
         return original_result
     return wrapper
 
+Crude = pd.read_csv('crude-oil-price.csv')
+Brent = pd.read_csv('BrentOilPrices.csv')
+
 class Oil():
-    def __init__(self, Crude, Brent):
-        self.Crude = Crude
-        self.Brent = Brent
+    def __init__(self):
+        self.Crude = pd.read_csv('crude-oil-price.csv')
+        self.Brent = pd.read_csv('BrentOilPrices.csv')
     @log
     def main(self):
         for i in range(0, len(self.Crude)):
@@ -143,15 +146,14 @@ class Oil():
                 case 'Dec': 
                     data2[0] = "12"
             self.Brent.loc[i, 'date'] = datetime.date(int(data2[2]),int(data2[0]),int(data2[1]))
-        self.merged_df = pd.merge(self.Crude, self.Brent, on='date')
+        self.merged_df = pd.concat([self.Brent, self.Crude], axis=0)
+        print(self.merged_df)
         x = self.merged_df['date'].tolist()
         y1 = self.merged_df['price1'].tolist()
         y2 = self.merged_df['price2'].tolist()
         plt.plot(x, y1, label='Crude')
         plt.plot(x, y2, label='Brent')
-        plt.xlabel('Date')
-        plt.ylabel('Prise')
-        plt.title('График зависимости цены от времени')
+        plt.title('Стоимость барреля нефти')
         plt.show()
 
 
@@ -159,7 +161,10 @@ class Oil():
     def __del__(self): #деструктор
         print("del done")
 
+
+
 def main():
-    Oil.main()
-    if __name__ == "__main__":
-        main()
+    price = Oil()
+    price.main()
+if __name__ == "__main__":
+    main()

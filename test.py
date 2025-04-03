@@ -105,16 +105,7 @@ for i in range(8360,len(Brent)):
         case 'Dec': 
             data2[0] = "12"
     Brent.loc[i, 'date'] = datetime.date(int(data2[2]),int(data2[0]),int(data2[1]))
-
-merged_df = pd.merge(Crude, Brent, on='date')
-merged_df.info()
-
-x = merged_df['date'].tolist()
-y1 = merged_df['price1'].tolist()
-y2 = merged_df['price2'].tolist()
-plt.plot(x, y1, label='Crude')
-plt.plot(x, y2, label='Brent')
-plt.xlabel('Date')
-plt.ylabel('Prise')
-plt.title('График зависимости цены от времени')
-plt.show()
+print(Brent)
+print(Crude)
+concatenated_df = pd.concat([Brent, Crude], axis=0)
+print(concatenated_df)
